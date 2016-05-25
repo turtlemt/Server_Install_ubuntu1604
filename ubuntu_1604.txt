@@ -1,0 +1,92 @@
+-------------------------System---------------------------------------
+apt-get update
+
+apache
+apt-get install apache2
+a2enmod rewrite
+a2enmod ssl
+a2ensite default-ssl
+
+
+
+
+vi /etc/ssh/sshd_config
+    PasswordAuthentication no -> yes
+
+service ssh restart
+---------------------權限設定(使用acl管理權限可跳過這步)--------------------------
+groupadd -g 2000 project
+useradd -m brian
+passwd brian
+vigr
+    將新建立的user copy 到 project 群組之後
+    
+
+---------------------ZSH--------------------------
+apt-get install gcc
+apt-get install libncurses5-dev
+apt-get install build-essential
+apt-get install zsh
+apt-get install git-core
+curl -L http://install.ohmyz.sh | sh
+vi /etc/passwd 
+    brian:x:1001:1001::/home/brian:/bin/zsh
+   
+wget https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O - | sh    
+
+---------------------phpbrew--------------------------
+apt-get install php libapache2-mod-php php-mcrypt php-mysql
+apt-get install -y libcurl3-openssl-dev libxslt1-dev re2c libxml2 php-cli bison libbz2-dev libreadline-dev
+apt-get install -y libfreetype6 libfreetype6-dev libjpeg-dev libgd-dev
+apt-get install -y libmhash-dev libmhash2
+apt-get install -y libmcrypt-dev
+apt-get install -y apache2-dev
+
+curl -L -O https://github.com/phpbrew/phpbrew/raw/master/phpbrew
+chmod +x phpbrew
+mv phpbrew /usr/local/bin/phpbrew
+phpbrew init
+vi .zshrc
+    [[ -e ~/.phpbrew/bashrc ]] && source ~/.phpbrew/bashrc
+
+
+ln -s /usr/include/freetype2 /usr/include/freetype2/freetype
+
+phpbrew install 7.0.6 +default +mysql +pdo +curl +gd +json +apxs2=/usr/bin/apxs2 +openssl=/usr -- --with-gd=shared --enable-gd-natf --with-jpeg-dir=/usr --with-png-dir=/usr --enable-ftp
+
+cat /etc/apache2/mods-enabled/php7.0.load     //切版本要手動修改這支
+
+
+其他必要安裝
+apt-get install php-gd php-curl
+apt-get install php-soap
+apt-get install mysql-server
+
+--------------send mail-----------------------
+apt-get install mailutils
+
+vi /root/.phpbrew/php/php-7.0.6/etc/php.ini
+sendmail_path = "/usr/sbin/sendmail -t -i"
+
+
+
+-----------time zone----------------
+dpkg-reconfigure tzdata
+
+-----------Add user----------------
+cd /home/ubuntu
+./adduser.sh
+
+vi /etc/passwd 
+    testman:x:1001:1001::/home/testman:/bin/zsh
+
+setfacl -R -m u:glenn:rwx,u:brian:rwx /var/www
+
+
+user login (Install oh-my-zsh)
+wget https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O - | sh   
+
+-----------Delete user----------------
+userdel username
+setfacl -R -b /var/www
+setfacl -R -m u:glenn:rwx,u:brian:rwx /var/www
