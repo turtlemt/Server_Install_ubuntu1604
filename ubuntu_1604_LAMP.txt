@@ -88,6 +88,12 @@ setfacl -R -m u:glenn:rwx,u:brian:rwx,u:chris:rwx,u:www-data:rwx /var/www
 user login (Install oh-my-zsh)
 wget https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O - | sh   
 
+
+-----------調整 user 資料夾 facl 權限----------------
+這個指令相當於清掉舊的設定再重新指定權限
+setfacl -R -b -m u:glenn:rwx,u:brian:rwx,u:chris:rwx,u:www-data:rwx /var/www
+
+
 -----------Delete user----------------
 userdel username
 setfacl -R -b /var/www
