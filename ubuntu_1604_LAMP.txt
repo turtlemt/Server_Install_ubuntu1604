@@ -82,7 +82,7 @@ cd /home/ubuntu
 vi /etc/passwd 
     testman:x:1001:1001::/home/testman:/bin/zsh
 
-setfacl -R -m u:glenn:rwx,u:brian:rwx /var/www
+setfacl -R -m u:glenn:rwx,u:brian:rwx,u:chris:rwx,u:www-data:rwx /var/www
 
 
 user login (Install oh-my-zsh)
@@ -91,4 +91,4 @@ wget https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O - 
 -----------Delete user----------------
 userdel username
 setfacl -R -b /var/www
-setfacl -R -m u:glenn:rwx,u:brian:rwx /var/www
+setfacl -R -m u:glenn:rwx,u:brian:rwx,u:www-data:rwx /var/www
