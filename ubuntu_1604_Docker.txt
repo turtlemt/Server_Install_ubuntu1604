@@ -1,0 +1,60 @@
+Linux version: ubuntu 16.04LTS
+
+-------------------------Network---------------------------------------
+vi /etc/network/interface
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# The primary network interface
+auto enp0s3
+iface enp0s3 inet dhcp
+
+#static eth1
+auto enp0s8
+iface enp0s8 inet static
+address 192.168.56.102
+netmask 255.255.255.0
+network 192.168.56.0
+#dns-nameservers 8.8.8.8
+broadcast 192.168.56.255
+
+
+/etc/init.d/nwtworking restart
+
+-------------------------System---------------------------------------
+apt-get update
+
+apt-get install ssh
+
+---------------------ZSH--------------------------
+apt-get install gcc
+apt-get install libncurses5-dev
+apt-get install build-essential
+apt-get install zsh
+apt-get install git-core
+curl -L http://install.ohmyz.sh | sh
+vi /etc/passwd 
+    brian:x:1001:1001::/home/brian:/bin/zsh
+   
+wget https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O - | sh    
+
+--------------------Samba-------------------------------
+apt-get install samba
+smbpasswd -a brian
+
+/etc/init.d/samba restart
+
+-------------------------Docker Install---------------------------------------
+apt-get update
+apt-get install -y docker.io
+ln -sf /usr/bin/docker.io /usr/local/bin/docker
+
+
+-------------------------Docker Image Pull---------------------------------------
+docker pull ubuntu:16.04
+docker run -t -i ubuntu:16.04 /bin/bash
+
+
+Ubuntu16.04 apache2 mysql phpbrew

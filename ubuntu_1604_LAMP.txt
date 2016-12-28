@@ -43,6 +43,7 @@ apt-get install -y libfreetype6 libfreetype6-dev libjpeg-dev libgd-dev
 apt-get install -y libmhash-dev libmhash2
 apt-get install -y libmcrypt-dev
 apt-get install -y apache2-dev
+apt-get install libssl-dev
 
 curl -L -O https://github.com/phpbrew/phpbrew/raw/master/phpbrew
 chmod +x phpbrew
@@ -54,15 +55,20 @@ vi .zshrc
 
 ln -s /usr/include/freetype2 /usr/include/freetype2/freetype
 
-phpbrew install 7.0.6 +default +mysql +pdo +curl +gd +json +apxs2=/usr/bin/apxs2 +openssl=/usr -- --with-gd=shared --enable-gd-natf --with-jpeg-dir=/usr --with-png-dir=/usr --enable-ftp
+phpbrew install 7.0.10 +default +mysql +pdo +curl +gd +json +apxs2=/usr/bin/apxs2 +openssl=/usr -- --with-gd=shared --enable-gd-natf --with-jpeg-dir=/usr --with-png-dir=/usr --enable-ftp
 
 cat /etc/apache2/mods-enabled/php7.0.load     //切版本要手動修改這支
+
+phpbrew ext install memcache
+phpbrew ext install gd -- --with-libdir=lib/i386-linux-gnu --with-gd=shared --enable-gd-native-ttf --with-jpeg-dir=/usr --with-png-dir=/usr --with-freetype-dir=/usr/include/freetype2/ft2build.h
+phpbrew ext install iconv
 
 
 其他必要安裝
 apt-get install php-gd php-curl
 apt-get install php-soap
 apt-get install mysql-server
+apt-get install ca-certificates
 
 --------------send mail-----------------------
 apt-get install mailutils
@@ -77,7 +83,7 @@ dpkg-reconfigure tzdata
 
 -----------Add user----------------
 cd /home/ubuntu
-./adduser.sh
+. /home/ubuntu/adduser.sh
 
 vi /etc/passwd 
     testman:x:1001:1001::/home/testman:/bin/zsh
@@ -98,3 +104,6 @@ setfacl -R -b -m u:glenn:rwx,u:brian:rwx,u:chris:rwx,u:www-data:rwx /var/www
 userdel username
 setfacl -R -b /var/www
 setfacl -R -m u:glenn:rwx,u:brian:rwx,u:www-data:rwx /var/www
+
+mysql -h wms.cllj5stubwkf.us-west-2.rds.amazonaws.com -P 3306 -u wmsdbmaster -p;
+Ubuntu 16.04LTS with Apache2.4 SSL Zsh Phpbrew Mysql
