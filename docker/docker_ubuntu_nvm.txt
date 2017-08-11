@@ -1,0 +1,56 @@
+====== 2016-11-10 Build a ubuntu_nvm docker image ======
+
+==== My env ====
+    Ubuntu 14.04 32-bit
+
+==== Docker install ====
+    apt-get update
+    apt-get install -y docker.io
+    ln -sf /usr/bin/docker.io /usr/local/bin/docker
+
+==== Get ubuntu_nvm image ====
+    直接取得已經build好的image
+    docker pull turtlemt/ubuntu_nvm:v0.1
+    docker run -p 8080:80 --name ubuntu_nvm -v /home/brian/code:/home/code -idt turtlemt/ubuntu_nvm:v0.1
+        "-v" 參數, 主機資料夾:container資料夾
+
+
+==== How to build this image ====
+    以下的資料是buil這個image的筆記，如果只是要使用可忽略
+
+==== Get a 32-bit ubuntu image ====
+    docker pull m0elnx/ubuntu-32bit
+    docker run -p 8080:80 --name ubuntu_nvm -idt m0elnx/ubuntu-32bit:latest
+    docker exec -ti ubuntu_nvm bash
+
+==== Install nvm ====
+    apt-get update
+    apt-get install git
+    參考安裝 nvm http://samwhelp.github.io/blog/read/platform/nodejs/install/
+    
+    exit
+
+==== Restart container ====
+    docker stop ubuntu_nvm
+    docker start ubuntu_nvm
+    docker exec -ti ubuntu_nvm bash
+
+==== Install node by nvm ====
+    參考 http://samwhelp.github.io/blog/read/platform/nodejs/install/
+    exit
+
+==== Commit as a new image ====    
+    docker stop ubuntu_nvm
+    docker commit -m "ubuntu & nvm & node" -a "Brian" 3c6cdcebaaeb turtlemt/ubuntu_nvm:v0.1
+    
+==== 進入即掛載方式 ====     
+    docker run -p 8080:80 --name ubuntu_nvm -v /home/brian/code:/home/code -idt turtlemt/ubuntu_nvm:v0.1
+
+==== Push to docker hub ==== 
+    docker push turtlemt/ubuntu_nvm
+
+
+
+
+
+docker commit -m "ubuntu & nvm & node" -a "Brian" 3c6cdcebaaeb turtlemt/ubuntu_nvm:v0.1

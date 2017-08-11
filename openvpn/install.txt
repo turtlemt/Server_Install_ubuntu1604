@@ -1,0 +1,52 @@
+-------------- Install --------------
+docker pull kylemanna/openvpn
+
+-------------- Config --------------
+docker run --name openvpn -v /home/brian/openvpn:/etc/openvpn --rm kylemanna/openvpn ovpn_genconfig -u udp://VPN.SERVERNAME.COM
+docker run --name openvpn -v /home/brian/openvpn:/etc/openvpn -d -p 1194:1194/udp --cap-add=NET_ADMIN kylemanna/openvpn
+
+
+docker run -p 80:80 --name apachev_phpbrew -v /etc/apache2 -v /etc/apache2 -v /var/www -idt turtlemt/apache2:v2
+docker run -p 8080:80 --name ubuntu_nvm -v /home/brian/code:/home/code -idt turtlemt/ubuntu_nvm:v0.1
+
+
+
+docker run --privileged  -d \
+              -v /home/brian/openvpn:/data \
+              -v /etc/localtime:/etc/localtime:ro \
+              -e "OPENVPN_PROVIDER=SB" \
+              -e "OPENVPN_CONFIG=Stargazer" \
+              -e "OPENVPN_USERNAME=sbuser" \
+              -e "OPENVPN_PASSWORD=1qaz2wsx" \
+              -p 9091:9091 \
+              haugene/transmission-openvpn
+              
+              
+docker run --name brian_openvpn -idt m0elnx/ubuntu-32bit:latest
+docker exec -ti brian_openvpn bash
+
+--------------- Install openvpn ---------------
+apt-get update
+apt-get -y install software-properties-common
+add-apt-repository multiverse
+add-apt-repository ppa:transmissionbt/ppa
+apt-get update
+apt-get install -y transmission-cli transmission-common transmission-daemon
+apt-get install -y openvpn curl rar unrar zip unzip wget
+curl -sLO https://github.com/Yelp/dumb-init/releases/download/v1.0.1/dumb-init_1.0.1_amd64.deb
+dpkg -i dumb-init_*.deb
+rm -rf dumb-init_*.deb
+apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+curl -L https://github.com/jwilder/dockerize/releases/download/v0.0.2/dockerize-linux-amd64-v0.0.2.tar.gz | tar -C /usr/local/bin -xzv
+groupmod -g 1000 users
+useradd -u 911 -U -d /config -s /bin/false abc
+usermod -G users abc
+
+
+docker commit -m "ubuntu & openvpn" -a "Brian" a8f54d414dbb turtlemt/openvpn:v0.1
+docker run -p 9091:9091 --name brian_openvpn -v /home/brian/openvpn:/data -v /etc/localtime:/etc/localtime:ro \
+    -e "OPENVPN_PROVIDER=SB" \
+    -e "OPENVPN_CONFIG=Stargazer" \
+    -e "OPENVPN_USERNAME=sbuser" \
+    -e "OPENVPN_PASSWORD=1qaz2wsx" \
+    -idt turtlemt/openvpn:v0.1

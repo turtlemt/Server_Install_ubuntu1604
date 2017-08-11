@@ -1,0 +1,180 @@
+-----------------------------安裝相關---------------------------------------
+非root user使用
+usermod -aG docker brian
+service docker restart
+
+
+
+apt-get update
+apt-get install -y docker.io
+ln -sf /usr/bin/docker.io /usr/local/bin/docker
+
+---------------------------------------------------------------------------
+docker pull ubuntu:16.04
+
+docker images
+    列出本機所有映像檔
+
+docker run -t -i ubuntu:16.04 /bin/bash
+    用image開啟容器，-i /bin/bash 則讓容器的標準輸入保持打開
+
+
+docker run -d ubuntu:16.04 /bin/sh -c
+
+docker stop d37343c54b7b
+
+
+
+停止或刪除全部containers
+docker stop $(docker ps -a -q)
+docker rm $(docker ps -a -q)
+
+
+
+
+docker run -p 80:80 --name apachev_phpbrew -v /etc/apache2 -v /etc/apache2 -v /var/www -idt turtlemt/apache2:v2
+
+
+----------------------------apache_phpbrew---------------------------------------
+docker build -t="turtlemt/apache_phpbrew:v1" .
+
+啟動container，並綁定volume
+docker run -p 80:80 --name apachev_phpbrew -v /etc/apache2 -v /etc/apache2 -v /var/www -idt turtlemt/apache2:v2
+
+docker run -p 80:80 --name apachev2 -v /home/brian/docker/volume/apache2:/etc/apache2 -idt turtlemt/apache2:v2
+
+進入容器
+docker exec -ti e28536572bad bash
+
+
+docker build -t="turtlemt/mysql5.7:v1" .
+docker run -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 -it turtlemt/mysql5.7:v1
+
+
+docker pull kalabox/phpbrewer:stable
+
+
+主機port
+netstat -peanut
+
+
+
+
+----------------------------ubuntu_bundle---------------------------------------
+Source image: https://hub.docker.com/_/ubuntu/
+docker pull ubuntu:16.04
+
+
+啟動container，並進入
+docker run -p 80:80 --name ubuntu_bundle -idt ubuntu:16.04
+docker exec -ti ubuntu_bundle bash
+apt-get update
+exit
+
+提交修改並存成新的映象檔，b21ecadfd3c0是現在執行的container ID
+docker commit -m "apt-get update" -a "Brian" b21ecadfd3c0 turtlemt/ubuntu_bundle:v0.1
+
+#apache2
+docker exec -ti ubuntu_bundle bash
+apt-get install apache2
+a2enmod rewrite
+a2enmod ssl
+a2ensite default-ssl
+exit
+docker commit -m "Install apache2" -a "Brian" b21ecadfd3c0 turtlemt/ubuntu_bundle:v0.2
+
+#phpbrew
+docker exec -ti ubuntu_bundle bash
+apt-get install -y php7.0 libapache2-mod-php7.0 php-dev php-pear autoconf automake curl libcurl3-openssl-dev build-essential libxslt1-dev re2c libxml2 libxml2-dev php-cli bison libbz2-dev libreadline-dev
+apt-get install -y libfreetype6 libfreetype6-dev libpng12-0 libpng12-dev libjpeg-dev libjpeg8-dev libjpeg8  libgd-dev libgd3 libxpm4 libltdl7 libltdl-dev
+apt-get install -y libssl-dev openssl
+apt-get install -y gettext libgettextpo-dev libgettextpo0
+apt-get install -y libicu-dev
+apt-get install -y libmhash-dev libmhash2
+apt-get install -y libmcrypt-dev libmcrypt4
+exit
+docker commit -m "Phpbrew requirement" -a "Brian" b21ecadfd3c0 turtlemt/ubuntu_bundle:v0.21
+
+apt-get install php-curl
+apt-get install apache2-dev
+phpbrew install 5.6.24 +default +mysql +pdo +curl +gd +json +apxs2=/usr/bin/apxs2 +openssl=/usr -- --with-gd=shared --enable-gd-natf --with-jpeg-dir=/usr --with-png-dir=/usr --enable-ftp
+phpbrew ext install xdebug
+phpbrew ext install memcache
+phpbrew ext install gd -- --with-libdir=lib/i386-linux-gnu --with-gd=shared --enable-gd-native-ttf --with-jpeg-dir=/usr --with-png-dir=/usr --with-freetype-dir=/usr/include/freetype2/ft2build.h
+phpbrew ext install iconv
+apt-get install php-soap
+apt-get install locate
+exit
+docker commit -m "Phpbrew done with php 5.6.24" -a "Brian" b21ecadfd3c0 turtlemt/ubuntu_bundle:v0.3
+
+
+phpbrew install 7.0.9 +default +mysql +pdo +curl +gd +json +apxs2=/usr/bin/apxs2 +openssl=/usr -- --with-gd=shared --enable-gd-natf --with-jpeg-dir=/usr --with-png-dir=/usr --enable-ftp
+phpbrew ext install xdebug
+phpbrew ext install memcache
+phpbrew ext install gd -- --with-libdir=lib/i386-linux-gnu --with-gd=shared --enable-gd-native-ttf --with-jpeg-dir=/usr --with-png-dir=/usr --with-freetype-dir=/usr/include/freetype2/ft2build.h
+phpbrew ext install iconv
+docker commit -m "Phpbrew install php 7.0.9" -a "Brian" b21ecadfd3c0 turtlemt/ubuntu_bundle:v0.4
+
+
+#copy config to dist folder 
+docker run -p 8081:80 -p 4431:443 --name ubuntu_bundle_temp \
+-v /etc/apache2 \
+-v /var/www \
+-idt turtlemt/ubuntu_bundle:v0.4
+
+#Run offical
+docker run -p 8081:80 -p 4431:443 --name ubuntu_bundle_temp \
+-v /home/brian/docker/volume/ubuntu_bundle_temp/apache2:/etc/apache2 \
+-v /home/brian/docker/volume/ubuntu_bundle_temp/www:/var/www \
+-idt turtlemt/ubuntu_bundle:v0.52 \
+bash
+
+docker run -p 8081:80 -p 4431:443 --name ubuntu_bundle_temp \
+-v /etc/apache2 \
+-v /var/www \
+-idt turtlemt/ubuntu_bundle:v0.51 \
+service apache2 start
+
+
+
+----------------------------mysql---------------------------------------
+Source image:https://hub.docker.com/_/mysql/
+docker pull mysql:5.7
+docker run -p 3311:3306 --name mysql57 \
+--env="MYSQL_ROOT_PASSWORD=09kvg2459806vb054j6fj0345f65430868045f3649fr456" \
+-v /home/brian/docker/volume/mysql5.7/config:/etc/mysql/ \
+-v /home/brian/docker/volume/mysql5.7/data:/var/lib/mysql \
+-idt mysql:5.7
+
+
+
+
+目前狀況
+mysql ok. config 先複製再對應過去
+
+
+
+
+看一下IP設定
+docker inspect mysql57  | grep IPAddress
+
+docker run --detach --name test-wordpress --link test-mysql:mysql wordpress
+
+
+
+17556/yr
+17556*30=52.7
+get 8.5/yr
+
+17556/yr 5% stock 30yr
+1,222,668 total
+6.1/yr
+
+匯出，
+docker pull centurylink/dockerfile-from-image
+
+docker run -v /var/run/docker.sock:/var/run/docker.sock turtlemt/ubuntu_bundle:v0.1 > Dockerfile.txt
+alias dfimage="docker run -v /var/run/docker.sock:/var/run/docker.sock --rm turtlemt/ubuntu_bundle:v0.1"
+docker run -v /run/docker.sock:/run/docker.sock centurylink/dockerfile-from-image turtlemt/ubuntu_bundle:v0.1 > Dockerfile.txt
+
+docker run -v /var/run/docker.sock:/var/run/docker.sock \ centurylink/dockerfile-from-image turtlemt/ubuntu_bundle:v0.1 > Dockerfile.txt
